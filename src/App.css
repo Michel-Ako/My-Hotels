@@ -26,12 +26,8 @@ body {
   margin-bottom: 1.5rem;
 }
 
-.card {
-  border: none;
-  border-radius: 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  position: relative;
+.card{
+  background-color:aliceblue;
 }
 
 .card-img-top {
@@ -91,3 +87,4 @@ body {
 .HomePageDiv {
   padding-left: 20%;
 }
+
