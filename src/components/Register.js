@@ -14,7 +14,7 @@ const Register = () => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <h2>Register</h2>
+          <h1>Register</h1>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="username">Username</label>

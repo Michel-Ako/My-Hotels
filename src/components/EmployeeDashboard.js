@@ -17,7 +17,7 @@ const EmployeeDashboard = ({ token }) => {
   }, [token]);
 
   return (
-    <div>
+    <div className='PageTitle'>
       <h1>Employee Dashboard</h1>
       <ul>
         {employees.map(employee => (

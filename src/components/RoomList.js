@@ -49,9 +49,11 @@ const RoomList = ({ filters }) => {
                 <div key={room.id} className="col-md-4 mb-4">
                     <div className="card">
                         <div className="card-body">
-                            <h5 className="card-title">{room.name}</h5>
+                            <h5 className="card-title">{room.chain}'s {room.name}</h5>
                             <p className="card-text">{room.description}</p>
                             <p className="card-text">${room.price}/night</p>
+                            <p className="card-text">Location: {room.location}</p>
+                            <p className="card-text"></p>
                             <Link to={`/rooms/${room.id}`} className="btn btn-primary">
                                 View Details
                             </Link>

@@ -6,7 +6,7 @@ const RoomDetails = () => {
 
   // fetch room details by id and display them
   return (
-    <div>
+    <div className='PageTitle'>
       <h1>Room Details</h1>
       <p>Details for room {id}</p>
     </div>

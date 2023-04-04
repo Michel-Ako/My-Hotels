@@ -15,7 +15,7 @@ body {
 .container {
   max-width: 1140px;
   margin: 0 auto;
-  padding: 0 15px;
+  padding: 10px 15px;
 }
 
 .text-center {
@@ -88,3 +88,15 @@ body {
   padding-left: 20%;
 }
 
+.navbar{
+  background-color: rgb(60, 102, 139);
+}
+
+.PageTitle{
+  padding-left: 20%;  
+  padding-top: 10px;
+}
+
+.form-group{
+  padding-bottom: 10px;
+}

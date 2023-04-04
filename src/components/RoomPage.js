@@ -15,6 +15,7 @@ const RoomPage = () => {
 
   return (
     <div className="container">
+    <h1>Rooms Available</h1>
       <div className="row">
         <div className="col-md-3">
           <RoomFilter filters={filters} onChange={handleFilterChange} />

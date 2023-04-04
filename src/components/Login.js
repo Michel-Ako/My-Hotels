@@ -17,6 +17,7 @@ const Login = () => {
     <div className="container">
       <div className="row">
         <div className="col-md-6 offset-md-3">
+        <h1>Login</h1>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="email">Email address</label>
