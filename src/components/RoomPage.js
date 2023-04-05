@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import RoomList from './RoomList';
 import RoomFilter from './RoomFilter';
+import axios from 'axios';
 
 function RoomPage() {
   const [rooms, setRooms] = useState([]);
@@ -13,11 +14,12 @@ function RoomPage() {
   });
 
   useEffect(() => {
-    const apiUrl = `http://localhost:8080/api/rooms?location=${filters.location}&chain=${filters.chain}&date=${filters.date}&capacity=${filters.capacity}&price=${filters.price}`;
+    const apiUrl = `http://localhost:8080/rooms?location=${filters.location}&chain=${filters.chain}&date=${filters.date}&capacity=${filters.capacity}&price=${filters.price}`;
     
-    fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => setRooms(data));
+    axios
+      .get(apiUrl)
+      .then(response => setRooms(response.data))
+      .catch(error => console.log(error));
   }, [filters]);
 
   const handleFilterChange = (name, value) => {

@@ -7,7 +7,7 @@ const RoomList = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/api/rooms')
+      .get('http://localhost:8080/rooms')
       .then((response) => {
         setRooms(response.data);
       })

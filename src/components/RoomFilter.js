@@ -6,10 +6,10 @@ const RoomFilter = ({ filters, onChange }) => {
   const [chains, setChains] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8080//api/locations')
+    axios.get('http://localhost:8080/locations')
       .then(response => setLocations(response.data))
       .catch(error => console.log(error));
-    axios.get('http://localhost:8080//api/chains')
+    axios.get('http://localhost:8080/chains')
       .then(response => setChains(response.data))
       .catch(error => console.log(error));
   }, []);

@@ -11,7 +11,7 @@ const EmployeeDashboard = () => {
 
   const fetchReservations = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/reservations');
+      const response = await axios.get('http://localhost:8080/reservations');
       setReservations(response.data);
     } catch (error) {
       console.error(error);

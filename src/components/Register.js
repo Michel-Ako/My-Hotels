@@ -36,7 +36,7 @@ const Register = ({ userType }) => {
       }),
     };
 
-    fetch('http://localhost:8080/api/auth/register', requestOptions)
+    fetch('http://localhost:8080/auth/register', requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
