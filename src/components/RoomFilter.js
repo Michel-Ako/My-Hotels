@@ -1,6 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const RoomFilter = ({ filters, onChange }) => {
+  const [locations, setLocations] = useState([]);
+  const [chains, setChains] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:8080//api/locations')
+      .then(response => setLocations(response.data))
+      .catch(error => console.log(error));
+    axios.get('http://localhost:8080//api/chains')
+      .then(response => setChains(response.data))
+      .catch(error => console.log(error));
+  }, []);
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     onChange(name, value);
@@ -21,9 +34,9 @@ const RoomFilter = ({ filters, onChange }) => {
               onChange={handleFilterChange}
             >
               <option value="">All Locations</option>
-              <option value="New York">New York</option>
-              <option value="Miami">Miami</option>
-              <option value="Los Angeles">Los Angeles</option>
+              {locations.map(location => (
+                <option key={location.id} value={location.name}>{location.name}</option>
+              ))}
             </select>
           </div>
 
@@ -37,9 +50,9 @@ const RoomFilter = ({ filters, onChange }) => {
               onChange={handleFilterChange}
             >
               <option value="">All Chains</option>
-              <option value="Hilton">Hilton</option>
-              <option value="Marriott">Marriott</option>
-              <option value="Hyatt">Hyatt</option>
+              {chains.map(chain => (
+                <option key={chain.id} value={chain.name}>{chain.name}</option>
+              ))}
             </select>
           </div>
 

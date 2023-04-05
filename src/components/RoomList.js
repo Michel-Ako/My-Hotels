@@ -1,68 +1,54 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-const dummyRooms = [
-    {
-        id: 1,
-        name: "Luxury Suite",
-        description: "A spacious suite with stunning views of the city.",
-        price: 250,
-        location: "New York",
-        chain: "Hilton",
-    },
-    {
-        id: 2,
-        name: "Standard Room",
-        description: "A comfortable room with all the amenities you need.",
-        price: 100,
-        location: "Miami",
-        chain: "Marriott",
-        },
-    {
-        id: 3,
-        name: "Executive Suite",
-        description:
-            "A luxurious suite with a separate living area and stunning views.",
-        price: 350,
-        location: "Los Angeles",
-        chain: "Hyatt",
-        },
-];
+const RoomList = () => {
+  const [rooms, setRooms] = useState([]);
 
-const RoomList = ({ filters }) => {
-    const filteredRooms = dummyRooms.filter((room) => {
-        if (filters.date && filters.date !== room.date) {
-            return false;
-        }
-        if (filters.chain && filters.chain !== room.chain) {
-            return false;
-        }
-        if (filters.location && filters.location !== room.location) {
-            return false;
-        }
-        return true;
-    });
+  useEffect(() => {
+    axios
+      .get('http://localhost:8080/api/rooms')
+      .then((response) => {
+        setRooms(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-    return (
-        <div className="row">
-            {filteredRooms.map((room) => (
-                <div key={room.id} className="col-md-4 mb-4">
-                    <div className="card">
-                        <div className="card-body">
-                            <h5 className="card-title">{room.chain}'s {room.name}</h5>
-                            <p className="card-text">{room.description}</p>
-                            <p className="card-text">${room.price}/night</p>
-                            <p className="card-text">Location: {room.location}</p>
-                            <p className="card-text"></p>
-                            <Link to={`/rooms/${room.id}`} className="btn btn-primary">
-                                View Details
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
+  return (
+    <div className="container">
+      <h1 className="mb-4">Rooms</h1>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Room Number</th>
+            <th>Hotel Chain</th>
+            <th>Price</th>
+            <th>Capacity</th>
+            <th>Location</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rooms.map((room) => (
+            <tr key={room.id}>
+              <td>{room.roomNumber}</td>
+              <td>{room.hotelChain}</td>
+              <td>{room.price}</td>
+              <td>{room.capacity}</td>
+              <td>{room.location}</td>
+              <td>
+                <Link to={`/rooms/${room.id}`} className="btn btn-primary">
+                  View Details
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default RoomList;
