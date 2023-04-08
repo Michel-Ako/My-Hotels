@@ -5,7 +5,7 @@ function Home() {
   const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/hotels").then((response) => {
+    axios.get("http://localhost:8080/api/hotel/").then((response) => {
       setHotels(response.data);
     });
   }, []);

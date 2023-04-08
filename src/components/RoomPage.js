@@ -14,7 +14,7 @@ function RoomPage() {
   });
 
   useEffect(() => {
-    const apiUrl = `http://localhost:8080/rooms?location=${filters.location}&chain=${filters.chain}&date=${filters.date}&capacity=${filters.capacity}&price=${filters.price}`;
+    const apiUrl = `http://localhost:8080/api/room/}`;
     
     axios
       .get(apiUrl)

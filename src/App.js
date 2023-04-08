@@ -5,8 +5,9 @@ import HomePage from './components/HomePage';
 import RoomPage from './components/RoomPage';
 import RoomDetails from './components/RoomDetails';
 import Login from './components/Login';
-import Register from './components/Register';
+import SignupForm from './components/SignupForm';
 import EmployeeDashboard from './components/EmployeeDashboard';
+import ReservationList from './components/ReservationList';
 import axios from 'axios';
 import './App.css';
 
@@ -14,7 +15,7 @@ function App() {
   const [hotels, setHotels] = React.useState([]);
 
   React.useEffect(() => {
-    axios.get('http://localhost:8080/hotels').then(response => {
+    axios.get('http://localhost:8080/api/hotel/').then(response => {
       setHotels(response.data);
     });
   }, []);
@@ -28,8 +29,9 @@ function App() {
           <Route exact path="/rooms" element={<RoomPage hotels={hotels} />} />
           <Route exact path="/rooms/:id" element={<RoomDetails hotels={hotels} />} />
           <Route exact path="/login" element={<Login />} />
-          <Route exact path="/register" element={<Register />} />
+          <Route exact path="/SignUp" element={<SignupForm />} />
           <Route exact path="/employee" element={<EmployeeDashboard />} />
+          <Route path="/reservations/:client_id" component={ReservationList} />
         </Routes>
       </div>
     </Router>

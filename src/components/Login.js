@@ -1,65 +1,84 @@
-import React, { useState } from 'react';
-import {  useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate} from 'react-router-dom';
+import axios from 'axios';
 
-const Login = ({ userType }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const LoginPage = ({ setUser }) => {
   const history = useNavigate();
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
+  const [formData, setFormData] = useState({
+    nom_complet: '',
+    nas: ''
+  });
+  const [error, setError] = useState(null);
+  const [clients, setClients] = useState([]);
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await fetch(`http://localhost:8080/${userType}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
+  useEffect(() => {
+    axios
+      .get('http://localhost:8080/api/client/')
+      .then((response) => {
+        setClients(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      if (!response.ok) {
-        throw new Error('Invalid username or password');
-      }
-      const { token } = await response.json();
-      localStorage.setItem('token', token);
-      history.push(`/${userType}`);
-    } catch (error) {
-      setError(error.message);
+  }, []);
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const client = clients.find(
+      (client) =>
+        client.nas === formData.nas &&
+        client.nom_complet === formData.nom_complet
+    );
+    if (client) {
+      setUser(client);
+      history.push('/reservations');
+    } else {
+      setError('Invalid login credentials');
     }
   };
 
   return (
     <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <h2 className="text-center">Login</h2>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <input type="text" className="form-control" id="username" value={username} onChange={handleUsernameChange} />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input type="password" className="form-control" id="password" value={password} onChange={handlePasswordChange} />
-            </div>
-            <button type="submit" className="btn btn-primary">Login</button>
-          </form>
+      <h1 className="mb-4">Login</h1>
+      {error && <div className="alert alert-danger">{error}</div>}
+      <form onSubmit={handleFormSubmit}>
+        <div className="form-group">
+          <label htmlFor="nom_complet">Full Name</label>
+          <input
+            id="nom_complet"
+            name="nom_complet"
+            type="text"
+            className="form-control"
+            value={formData.nom_complet}
+            onChange={handleFormChange}
+          />
         </div>
-      </div>
+        <div className="form-group">
+          <label htmlFor="nas">NAS</label>
+          <input
+            id="nas"
+            name="nas"
+            type="text"
+            className="form-control"
+            value={formData.nas}
+            onChange={handleFormChange}
+          />
+        </div>
+        <button type="submit" className="btn btn-primary">
+          Login
+        </button>
+      </form>
     </div>
   );
 };
 
-export default Login;
+export default LoginPage;

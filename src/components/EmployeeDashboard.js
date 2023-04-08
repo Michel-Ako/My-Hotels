@@ -11,7 +11,7 @@ const EmployeeDashboard = () => {
 
   const fetchReservations = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/reservations');
+      const response = await axios.get('http://localhost:8080/api/reservation/');
       setReservations(response.data);
     } catch (error) {
       console.error(error);
@@ -42,7 +42,7 @@ const EmployeeDashboard = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8080/api/reservations', {
+      const response = await axios.post('http://localhost:8080/api/reservation/', {
         guestName: guestName,
         roomNumber: roomNumber,
         checkInDate: checkInDate,
@@ -62,7 +62,7 @@ const EmployeeDashboard = () => {
 
   const handleReservationCancel = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/reservations/${id}`);
+      await axios.delete(`http://localhost:8080/api/reservation/${id}`);
       setReservations(reservations.filter(reservation => reservation.id !== id));
     } catch (error) {
       console.error(error);

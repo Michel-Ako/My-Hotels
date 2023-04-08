@@ -4,13 +4,17 @@ import axios from 'axios';
 const RoomFilter = ({ filters, onChange }) => {
   const [locations, setLocations] = useState([]);
   const [chains, setChains] = useState([]);
+  const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8080/locations')
+    axios.get('http://localhost:8080/api/locations/')
       .then(response => setLocations(response.data))
       .catch(error => console.log(error));
-    axios.get('http://localhost:8080/chains')
+    axios.get('http://localhost:8080/api/chain/')
       .then(response => setChains(response.data))
+      .catch(error => console.log(error));
+    axios.get('http://localhost:8080/api/hotel/')
+      .then(response => setHotels(response.data))
       .catch(error => console.log(error));
   }, []);
 
@@ -35,7 +39,7 @@ const RoomFilter = ({ filters, onChange }) => {
             >
               <option value="">All Locations</option>
               {locations.map(location => (
-                <option key={location.id} value={location.name}>{location.name}</option>
+                <option key={location.id} value={location.id}>{location.ville}</option>
               ))}
             </select>
           </div>
@@ -51,7 +55,23 @@ const RoomFilter = ({ filters, onChange }) => {
             >
               <option value="">All Chains</option>
               {chains.map(chain => (
-                <option key={chain.id} value={chain.name}>{chain.name}</option>
+                <option key={chain.id} value={chain.id}>{chain.nom}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="hotel">Hotel</label>
+            <select
+              id="hotel"
+              name="hotel"
+              className="form-control"
+              value={filters.hotel}
+              onChange={handleFilterChange}
+            >
+              <option value="">All Hotels</option>
+              {hotels.map(hotel => (
+                <option key={hotel.id} value={hotel.id}>{hotel.nom}</option>
               ))}
             </select>
           </div>
