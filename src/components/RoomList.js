@@ -9,7 +9,13 @@ const RoomList = () => {
   const [filters, setFilters] = useState({
     chain: '',
     hotel: '',
-    date: '',
+    startDate: '',
+    endDate: '',
+    capacity: '',
+    size: '',
+    category: '',
+    totalRooms: '',
+    price: '',
   });
 
   useEffect(() => {
@@ -23,6 +29,8 @@ const RoomList = () => {
             ...room,
             nomHotel: hotelResponse.data.nomHotel,
             nomChaine: chainResponse.data.nomChaine,
+            categorie: hotelResponse.data.categorie,
+            totalRooms: hotelResponse.data.totalRooms,
           };
         });
         Promise.all(updatedRooms).then((updatedRoomsData) => {
@@ -39,7 +47,27 @@ const RoomList = () => {
     const filtered = rooms.filter((room) => {
       const chainMatch = filters.chain === '' || room.nomChaine === filters.chain;
       const hotelMatch = filters.hotel === '' || room.nomHotel === filters.hotel;
-      return chainMatch && hotelMatch;
+      const dateMatch =
+        filters.startDate === '' || filters.endDate === ''
+          ? true
+          : new Date(filters.startDate) <= new Date(room.date) &&
+          new Date(filters.endDate) >= new Date(room.date);
+      const capacityMatch = filters.capacity === '' || room.capacite >= parseInt(filters.capacity);
+      const sizeMatch = filters.size === '' || room.superficie >= parseInt(filters.size);
+      const categoryMatch = filters.category === '' || room.categorie === parseInt(filters.category);
+      const totalRoomsMatch = filters.totalRooms === '' || room.totalRooms >= parseInt(filters.totalRooms);
+      const priceMatch = filters.price === '' || room.prixParNuit <= parseFloat(filters.price);
+
+      return (
+        chainMatch &&
+        hotelMatch &&
+        dateMatch &&
+        capacityMatch &&
+        sizeMatch &&
+        categoryMatch &&
+        totalRoomsMatch &&
+        priceMatch
+      );
     });
     setFilteredRooms(filtered);
   }, [filters, rooms]);
@@ -69,7 +97,7 @@ const RoomList = () => {
                     <p className="card-text">Type: {room.typeChambre}</p>
                     <p className="card-text">Price: {room.prixParNuit}</p>
                     <p className="card-text">Capacity: {room.capacite}</p>
-                    <Link to={`/rooms/${room.numeroChambre}`} className="btn btn-primary">
+                    <Link to={"/rooms/${room.numeroChambre}"} className="btn btn-primary">
                       View Details
                     </Link>
                   </div>
@@ -79,7 +107,7 @@ const RoomList = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

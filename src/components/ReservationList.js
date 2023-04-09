@@ -24,11 +24,12 @@ const ReservationList = ({ clientID }) => {
         </thead>
         <tbody>
           {reservations.map(reservation => (
-            <tr key={reservation.reservation_id}>
-              <td>{reservation.reservation_id}</td>
-              <td>{reservation.check_in_date}</td>
-              <td>{reservation.check_out_date}</td>
+            <tr key={reservation.id_reservation}>
+              <td>{reservation.id_reservation}</td>
+              <td>{reservation.date_debut}</td>
+              <td>{reservation.dat_fin}</td>
               <td>{reservation.numero_chambre}</td>
+              <td>{reservation.numero_archive}</td>
             </tr>
           ))}
         </tbody>
