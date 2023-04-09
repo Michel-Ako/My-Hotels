@@ -14,13 +14,16 @@ function RoomPage() {
   });
 
   useEffect(() => {
-    const apiUrl = `http://localhost:8080/api/room/}`;
-    
     axios
-      .get(apiUrl)
-      .then(response => setRooms(response.data))
-      .catch(error => console.log(error));
-  }, [filters]);
+      .get('http://localhost:8080/api/room/')
+      .then((response) => {
+        console.log(response.data);
+        setRooms(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleFilterChange = (name, value) => {
     setFilters(prevFilters => ({
@@ -32,10 +35,7 @@ function RoomPage() {
   return (
     <div className="container mt-5">
       <div className="row">
-        <div className="col-md-4">
-          <RoomFilter filters={filters} onChange={handleFilterChange} />
-        </div>
-        <div className="col-md-8">
+        <div>
           <RoomList rooms={rooms} />
         </div>
       </div>

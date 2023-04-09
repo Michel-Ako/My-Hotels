@@ -2,26 +2,34 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const RoomFilter = ({ filters, onChange }) => {
-  const [locations, setLocations] = useState([]);
   const [chains, setChains] = useState([]);
   const [hotels, setHotels] = useState([]);
+  const [selectedChain, setSelectedChain] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/locations/')
-      .then(response => setLocations(response.data))
-      .catch(error => console.log(error));
     axios.get('http://localhost:8080/api/chain/')
-      .then(response => setChains(response.data))
+      .then(response => {
+        console.log(response.data);
+        setChains(response.data);
+      })
       .catch(error => console.log(error));
     axios.get('http://localhost:8080/api/hotel/')
-      .then(response => setHotels(response.data))
+      .then(response => {
+        console.log(response.data);
+        setHotels(response.data);
+      })
       .catch(error => console.log(error));
   }, []);
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    onChange(name, value);
+  const handleChainChange = (e) => {
+    const { value } = e.target;
+    setSelectedChain(value);
+    onChange('chain', value);
   };
+
+  const filteredHotels = selectedChain
+    ? hotels.filter(hotel => hotel.chaineHoteliere.nomChaine === selectedChain)
+    : hotels;
 
   return (
     <div className="card mb-3">
@@ -29,52 +37,38 @@ const RoomFilter = ({ filters, onChange }) => {
       <div className="card-body">
         <form>
           <div className="form-group">
-            <label htmlFor="location">Location</label>
-            <select
-              id="location"
-              name="location"
-              className="form-control"
-              value={filters.location}
-              onChange={handleFilterChange}
-            >
-              <option value="">All Locations</option>
-              {locations.map(location => (
-                <option key={location.id} value={location.id}>{location.ville}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
             <label htmlFor="chain">Chain</label>
             <select
               id="chain"
               name="chain"
               className="form-control"
-              value={filters.chain}
-              onChange={handleFilterChange}
+              value={selectedChain}
+              onChange={handleChainChange}
             >
               <option value="">All Chains</option>
               {chains.map(chain => (
-                <option key={chain.id} value={chain.id}>{chain.nom}</option>
+                <option key={chain.nomChaine} value={chain.nomChaine}>{chain.nomChaine}</option>
               ))}
             </select>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="hotel">Hotel</label>
-            <select
-              id="hotel"
-              name="hotel"
-              className="form-control"
-              value={filters.hotel}
-              onChange={handleFilterChange}
-            >
-              <option value="">All Hotels</option>
-              {hotels.map(hotel => (
-                <option key={hotel.id} value={hotel.id}>{hotel.nom}</option>
-              ))}
-            </select>
-          </div>
+          {filteredHotels.length > 0 && (
+            <div className="form-group">
+              <label htmlFor="hotel">Hotel</label>
+              <select
+                id="hotel"
+                name="hotel"
+                className="form-control"
+                value={filters.hotel}
+                onChange={(e) => onChange('hotel', e.target.value)}
+              >
+                <option value="">All Hotels</option>
+                {filteredHotels.map(hotel => (
+                  <option key={hotel.idHotel} value={hotel.idHotel}>{hotel.nomHotel}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="date">Date</label>
@@ -84,7 +78,7 @@ const RoomFilter = ({ filters, onChange }) => {
               type="date"
               className="form-control"
               value={filters.date}
-              onChange={handleFilterChange}
+              onChange={(e) => onChange('date', e.target.value)}
             />
           </div>
         </form>
