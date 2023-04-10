@@ -11,8 +11,6 @@ const RoomList = () => {
     hotel: '',
     startDate: '',
     endDate: '',
-    capacity: '',
-    size: '',
     category: '',
     totalRooms: '',
     price: '',
@@ -41,35 +39,29 @@ const RoomList = () => {
 
   useEffect(() => {
     const applyFilters = async () => {
-      const filtered = [];
-
-      for (const room of rooms) {
-        const hotelData = await getHotelData(room.id_hotel);
-
-        const chainMatch = filters.chain === '' || hotelData.chaineHoteliere.nomChaine === filters.chain;
-        const hotelMatch = filters.hotel === '' || hotelData.idHotel === filters.hotel;
-        const capacityMatch = filters.capacity === '' || room.capacite >= parseInt(filters.capacity);
-        const sizeMatch = filters.size === '' || room.superficie >= parseInt(filters.size);
-        const totalRoomsMatch = filters.totalRooms === '' || hotelData.totalRooms >= parseInt(filters.totalRooms);
-        const priceMatch = filters.price === '' || room.prixParNuit <= parseFloat(filters.price);
-
-        if (
-          chainMatch &&
-          hotelMatch &&
-          capacityMatch &&
-          sizeMatch &&
-          totalRoomsMatch &&
-          priceMatch
-        ) {
-          filtered.push({ ...room, hotelData });
-        }
-      }
-
-      setFilteredRooms(filtered);
+      const filtered = await Promise.all(
+        rooms.map(async (room) => {
+          const hotelData = await getHotelData(room.id_hotel);
+          const chainMatch = filters.chain === '' || hotelData.chaineHoteliere.nomChaine === filters.chain;
+          const hotelMatch = filters.hotel === '' || hotelData.idHotel.toString() === filters.hotel;
+          const capacityMatch = filters.capacity === '' || room.capacite >= parseInt(filters.capacity);
+          const totalRoomsMatch = filters.totalRooms === '' || hotelData.totalRooms >= parseInt(filters.totalRooms);
+          const priceMatch = filters.price === '' || room.prixParNuit <= parseFloat(filters.price);
+  
+          if (chainMatch && hotelMatch && capacityMatch && totalRoomsMatch && priceMatch) {
+            return { ...room, hotelData };
+          } else {
+            return null;
+          }
+        })
+      );
+  
+      setFilteredRooms(filtered.filter((room) => room !== null));
     };
-
+  
     applyFilters();
   }, [filters]);
+  
 
   return (
     <div className="container-fluid">

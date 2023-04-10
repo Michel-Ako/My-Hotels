@@ -53,7 +53,7 @@ const RoomFilter = ({ onChange }) => {
   const handleChainChange = (e) => {
     const { value } = e.target;
     setSelectedChain(value);
-    setFilters({ ...filters, chain: value, hotel: '' });
+    setFilters((prevFilters) => ({ ...prevFilters, chain: value, hotel: '' }));
   };
 
   useEffect(() => {
@@ -65,7 +65,6 @@ const RoomFilter = ({ onChange }) => {
     : hotels;
 
   const uniqueCapacityOptions = Array.from(new Set(rooms.map(room => room.capacite))).sort((a, b) => a - b);
-  const uniqueSizeOptions = Array.from(new Set(rooms.map(room => room.superficie))).sort((a, b) => a - b);
   const uniqueTotalRoomsOptions = Array.from(new Set(hotels.map(hotel => hotel.totalRooms))).sort((a, b) => a - b);
   const uniquePriceOptions = Array.from(new Set(rooms.map(room => room.prixParNuit))).sort((a, b) => a - b);
 
@@ -111,27 +110,10 @@ const RoomFilter = ({ onChange }) => {
           value={filters.capacity}
           onChange={handleInputChange}
         >
-          <option value="">Select Capacity</option>
+          <option value="">Select Minimum Capacity</option>
           {uniqueCapacityOptions.map((capacity, index) => (
             <option key={index} value={capacity}>
               {capacity}
-            </option>
-          ))}
-        </select>
-      </div>
-    
-      <div className="form-group">
-        <label htmlFor="size">Room Size</label>
-        <select
-          className="form-select"
-          name="size"
-          value={filters.size}
-          onChange={handleInputChange}
-        >
-          <option value="">Select Size</option>
-          {uniqueSizeOptions.map((size, index) => (
-            <option key={index} value={size}>
-              {size}
             </option>
           ))}
         </select>
@@ -152,9 +134,8 @@ const RoomFilter = ({ onChange }) => {
           ))}
         </select>
       </div>
-    
       <div className="form-group">
-        <label htmlFor="price">Price Per Night</label>
+        <label htmlFor="price">Max Price</label>
         <select
           className="form-select"
           name="price"
