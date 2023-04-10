@@ -103,7 +103,7 @@ const RoomFilter = ({ onChange }) => {
         </div>
       )}
       <div className="form-group">
-        <label htmlFor="capacity">Room Capacity</label>
+        <label htmlFor="capacity">Minimum Room Capacity</label>
         <select
           className="form-select"
           name="capacity"
