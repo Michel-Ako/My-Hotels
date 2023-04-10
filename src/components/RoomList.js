@@ -22,68 +22,60 @@ const RoomList = () => {
     axios
       .get('http://localhost:8080/api/room/')
       .then((response) => {
-        const updatedRooms = response.data.map(async (room) => {
-          const hotelResponse = await axios.get(`http://localhost:8080/api/hotel/${room.id_hotel}`);
-          const chainResponse = await axios.get(`http://localhost:8080/api/chain/${hotelResponse.data.chaineHoteliere.nomChaine}`);
-          return {
-            ...room,
-            nomHotel: hotelResponse.data.nomHotel,
-            nomChaine: chainResponse.data.nomChaine,
-            categorie: hotelResponse.data.categorie,
-            totalRooms: hotelResponse.data.totalRooms,
-          };
-        });
-        Promise.all(updatedRooms).then((updatedRoomsData) => {
-          setRooms(updatedRoomsData);
-          setFilteredRooms(updatedRoomsData);
-        });
+        setRooms(response.data);
+        setFilteredRooms(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  useEffect(() => {
-    const filtered = rooms.filter((room) => {
-      const chainMatch = filters.chain === '' || room.nomChaine === filters.chain;
-      const hotelMatch = filters.hotel === '' || room.nomHotel === filters.hotel;
-      const dateMatch =
-        filters.startDate === '' || filters.endDate === ''
-          ? true
-          : new Date(filters.startDate) <= new Date(room.date) &&
-          new Date(filters.endDate) >= new Date(room.date);
-      const capacityMatch = filters.capacity === '' || room.capacite >= parseInt(filters.capacity);
-      const sizeMatch = filters.size === '' || room.superficie >= parseInt(filters.size);
-      const categoryMatch = filters.category === '' || room.categorie === parseInt(filters.category);
-      const totalRoomsMatch = filters.totalRooms === '' || room.totalRooms >= parseInt(filters.totalRooms);
-      const priceMatch = filters.price === '' || room.prixParNuit <= parseFloat(filters.price);
-
-      return (
-        chainMatch &&
-        hotelMatch &&
-        dateMatch &&
-        capacityMatch &&
-        sizeMatch &&
-        categoryMatch &&
-        totalRoomsMatch &&
-        priceMatch
-      );
-    });
-    setFilteredRooms(filtered);
-  }, [filters, rooms]);
-
-  const handleFilterChange = (name, value) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value,
-    }));
+  const getHotelData = async (roomId) => {
+    const hotelResponse = await axios.get(`http://localhost:8080/api/hotel/${roomId}/`);
+    return hotelResponse.data;
   };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  useEffect(() => {
+    const applyFilters = async () => {
+      const filtered = [];
+
+      for (const room of rooms) {
+        const hotelData = await getHotelData(room.id_hotel);
+
+        const chainMatch = filters.chain === '' || hotelData.chaineHoteliere.nomChaine === filters.chain;
+        const hotelMatch = filters.hotel === '' || hotelData.idHotel === filters.hotel;
+        const capacityMatch = filters.capacity === '' || room.capacite >= parseInt(filters.capacity);
+        const sizeMatch = filters.size === '' || room.superficie >= parseInt(filters.size);
+        const totalRoomsMatch = filters.totalRooms === '' || hotelData.totalRooms >= parseInt(filters.totalRooms);
+        const priceMatch = filters.price === '' || room.prixParNuit <= parseFloat(filters.price);
+
+        if (
+          chainMatch &&
+          hotelMatch &&
+          capacityMatch &&
+          sizeMatch &&
+          totalRoomsMatch &&
+          priceMatch
+        ) {
+          filtered.push({ ...room, hotelData });
+        }
+      }
+
+      setFilteredRooms(filtered);
+    };
+
+    applyFilters();
+  }, [filters]);
 
   return (
     <div className="container-fluid">
       <div className="row">
         <div className="col-md-3">
-          <RoomFilter filters={filters} onChange={handleFilterChange} />
+          <RoomFilter onChange={handleFilterChange} />
         </div>
         <div className="col-md-9">
           <h1 className="mb-4">Rooms</h1>
@@ -92,12 +84,18 @@ const RoomList = () => {
               <div key={room.numeroChambre} className="col">
                 <div className="card h-100">
                   <div className="card-body">
-                    <h5 className="card-title">Hotel Name: {room.nomHotel}</h5>
-                    <p className="card-text">Room Number: {room.numeroChambre}</p>
+                    <h5 className="card-title">
+                      Hotel Name:{" "}
+                      {room.hotelData ? (
+                        room.hotelData.nomHotel
+                      ) : (
+                        <span className="text-muted">Loading...</span>
+                      )}
+                    </h5><p className="card-text">Room Number: {room.numeroChambre}</p>
                     <p className="card-text">Type: {room.typeChambre}</p>
                     <p className="card-text">Price: {room.prixParNuit}</p>
                     <p className="card-text">Capacity: {room.capacite}</p>
-                    <Link to={"/rooms/${room.numeroChambre}"} className="btn btn-primary">
+                    <Link to={`/rooms/${room.numeroChambre}`} className="btn btn-primary">
                       View Details
                     </Link>
                   </div>
@@ -107,8 +105,9 @@ const RoomList = () => {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
 export default RoomList;
+

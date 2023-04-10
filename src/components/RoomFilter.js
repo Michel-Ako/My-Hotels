@@ -9,7 +9,6 @@ const RoomFilter = ({ onChange }) => {
     endDate: '',
     capacity: '',
     size: '',
-    hotelCategory: '',
     totalRooms: '',
     price: '',
   });
@@ -18,7 +17,6 @@ const RoomFilter = ({ onChange }) => {
   const [rooms, setRooms] = useState([]);
   const [selectedChain, setSelectedChain] = useState('');
   const [chains, setChains] = useState([]);
-  const [hotelCategories, setHotelCategories] = useState([]);
   const [roomPrices, setRoomPrices] = useState([]);
 
   useEffect(() => {
@@ -58,87 +56,18 @@ const RoomFilter = ({ onChange }) => {
     setFilters({ ...filters, chain: value, hotel: '' });
   };
 
+  useEffect(() => {
+    onChange(filters);
+  }, [filters]);
+
   const filteredHotels = selectedChain
     ? hotels.filter(hotel => hotel.chaineHoteliere.nomChaine === selectedChain)
     : hotels;
 
-  const filteredRooms = filteredHotels.filter((hotel) => {
-    if (filters.hotel && hotel.idHotel !== parseInt(filters.hotel)) {
-      return false;
-    }
-
-    if (filters.startDate && filters.endDate) {
-      const startDate = new Date(filters.startDate);
-      const endDate = new Date(filters.endDate);
-
-      const availableRooms = hotel.chambre.filter((room) => {
-        const isRoomAvailable = room.reservation.every((reservation) => {
-          const reservationStartDate = new Date(reservation.dateDebut);
-          const reservationEndDate = new Date(reservation.dateFin);
-
-          const isBefore = reservationEndDate < startDate;
-          const isAfter = reservationStartDate > endDate;
-
-          return isBefore || isAfter;
-        });
-
-        return isRoomAvailable;
-      });
-
-      if (availableRooms.length < 1) {
-        return false;
-      }
-    }
-
-    if (filters.capacity && parseInt(filters.capacity) > 0) {
-      const availableRooms = hotel.chambre.filter((room) => {
-        return room.capacite >= parseInt(filters.capacity);
-      });
-
-      if (availableRooms.length < 1) {
-        return false;
-      }
-    }
-
-    if (filters.size && parseFloat(filters.size) > 0) {
-      const availableRooms = hotel.chambre.filter((room) => {
-        return room.Etendue >= parseFloat(filters.size);
-      });
-
-      if (availableRooms.length < 1) {
-        return false;
-      }
-    }
-
-    if (filters.hotelCategory && parseInt(filters.hotelCategory) > 0) {
-      if (parseInt(filters.hotelCategory)
-        !== parseInt(hotel.Nombre_etoiles)) {
-        return false;
-      }
-    }
-
-    if (filters.totalRooms && parseInt(filters.totalRooms) > 0) {
-      if (parseInt(filters.totalRooms) !== parseInt(hotel.Nombre_chambre)) {
-        return false;
-      }
-    }
-
-    if (filters.price && parseFloat(filters.price) > 0) {
-      const availableRooms = hotel.chambre.filter((room) => {
-        return room.prixParNuit <= parseFloat(filters.price);
-      });
-
-      if (availableRooms.length < 1) {
-        return false;
-      }
-    }
-
-    return true;
-  });
-
-  useEffect(() => {
-    onChange(filteredRooms);
-  }, [filteredRooms]);
+  const uniqueCapacityOptions = Array.from(new Set(rooms.map(room => room.capacite))).sort((a, b) => a - b);
+  const uniqueSizeOptions = Array.from(new Set(rooms.map(room => room.superficie))).sort((a, b) => a - b);
+  const uniqueTotalRoomsOptions = Array.from(new Set(hotels.map(hotel => hotel.totalRooms))).sort((a, b) => a - b);
+  const uniquePriceOptions = Array.from(new Set(rooms.map(room => room.prixParNuit))).sort((a, b) => a - b);
 
   return (
     <form className="room-filter">
@@ -174,29 +103,6 @@ const RoomFilter = ({ onChange }) => {
           </select>
         </div>
       )}
-
-      <div className="form-group">
-        <label htmlFor="startDate">Reservation Start Date</label>
-        <input
-          type="date"
-          className="form-control"
-          name="startDate"
-          value={filters.startDate}
-          onChange={handleInputChange}
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="endDate">Reservation End Date</label>
-        <input
-          type="date"
-          className="form-control"
-          name="endDate"
-          value={filters.endDate}
-          onChange={handleInputChange}
-        />
-      </div>
-
       <div className="form-group">
         <label htmlFor="capacity">Room Capacity</label>
         <select
@@ -206,14 +112,14 @@ const RoomFilter = ({ onChange }) => {
           onChange={handleInputChange}
         >
           <option value="">Select Capacity</option>
-          {rooms.map((room, index) => (
-            <option key={index} value={room.capacite}>
-              {room.capacite}
+          {uniqueCapacityOptions.map((capacity, index) => (
+            <option key={index} value={capacity}>
+              {capacity}
             </option>
           ))}
         </select>
       </div>
-
+    
       <div className="form-group">
         <label htmlFor="size">Room Size</label>
         <select
@@ -223,26 +129,9 @@ const RoomFilter = ({ onChange }) => {
           onChange={handleInputChange}
         >
           <option value="">Select Size</option>
-          {rooms.map((room, index) => (
-            <option key={index} value={room.Etendue}>
-              {room.Etendue}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="hotelCategory">Hotel Category</label>
-        <select
-          className="form-select"
-          name="hotelCategory"
-          value={filters.hotelCategory}
-          onChange={handleInputChange}
-        >
-          <option value="">Select Category</option>
-          {hotelCategories.map((category, index) => (
-            <option key={index} value={category}>
-              {category}
+          {uniqueSizeOptions.map((size, index) => (
+            <option key={index} value={size}>
+              {size}
             </option>
           ))}
         </select>
@@ -256,16 +145,16 @@ const RoomFilter = ({ onChange }) => {
           onChange={handleInputChange}
         >
           <option value="">Select Total Rooms</option>
-          {hotels.map((hotel, index) => (
-            <option key={index} value={hotel.Nombre_chambre}>
-              {hotel.Nombre_chambre}
+          {uniqueTotalRoomsOptions.map((totalRooms, index) => (
+            <option key={index} value={totalRooms}>
+              {totalRooms}
             </option>
           ))}
         </select>
       </div>
-
+    
       <div className="form-group">
-        <label htmlFor="price">Room Price</label>
+        <label htmlFor="price">Price Per Night</label>
         <select
           className="form-select"
           name="price"
@@ -273,7 +162,7 @@ const RoomFilter = ({ onChange }) => {
           onChange={handleInputChange}
         >
           <option value="">Select Price</option>
-          {roomPrices.map((price, index) => (
+          {uniquePriceOptions.map((price, index) => (
             <option key={index} value={price}>
               {price}
             </option>
@@ -281,7 +170,6 @@ const RoomFilter = ({ onChange }) => {
         </select>
       </div>
     </form>
-  );
-};
-
+    );
+  };
 export default RoomFilter;
