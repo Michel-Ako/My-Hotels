@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Navbar from './Navbar';
 
 const EmployeeDashboard = () => {
   const [reservations, setReservations] = useState([]);
@@ -71,6 +72,8 @@ const EmployeeDashboard = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="container">
       <h1>Employee Dashboard</h1>
 
@@ -124,6 +127,7 @@ const EmployeeDashboard = () => {
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>
     </div>
+    </>
   );
 };
 

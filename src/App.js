@@ -1,11 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import RoomPage from './components/RoomPage';
 import RoomDetails from './components/RoomDetails';
 import Login from './components/Login';
-import SignupForm from './components/SignupForm';
+import SignupForm from './components/SignUpForm';
 import EmployeeDashboard from './components/EmployeeDashboard';
 import ReservationList from './components/ReservationList';
 import axios from 'axios';
@@ -23,7 +22,6 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar />
         <Routes>
           <Route exact path="/" element={<HomePage hotels={hotels} />} />
           <Route exact path="/rooms" element={<RoomPage hotels={hotels} />} />

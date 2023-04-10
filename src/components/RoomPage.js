@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RoomList from './RoomList';
 import RoomFilter from './RoomFilter';
 import axios from 'axios';
+import Navbar from './Navbar';
 
 function RoomPage() {
   const [rooms, setRooms] = useState([]);
@@ -33,6 +34,8 @@ function RoomPage() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="container mt-5">
       <div className="row">
         <div>
@@ -40,7 +43,9 @@ function RoomPage() {
         </div>
       </div>
     </div>
+    </>
   );
+  
 }
 
 export default RoomPage;
