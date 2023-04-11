@@ -25,16 +25,6 @@ const Navbar = () => {
                 Rooms
               </Link>
             </li>
-            <li className="nav-item">
-              <Link to="/login" className="nav-link">
-                Log In
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/SignUp" className="nav-link">
-                Register
-              </Link>
-            </li>
           </ul>
         </div>
       </div>

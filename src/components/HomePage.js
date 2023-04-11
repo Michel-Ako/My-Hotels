@@ -32,7 +32,7 @@ function Home() {
           if (loginType === 'client') {
             navigate('/rooms');
           } else if (loginType === 'employee') {
-            navigate('/EmployeeDashboard');
+            navigate('/Employee');
           }
         }
          else {
