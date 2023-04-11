@@ -1,28 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link , useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 
-const RoomDetails = (props) => {
+const RoomDetails = () => {
   const [room, setRoom] = useState({});
+  const [hotel, setHotel] = useState({});
   const [loading, setLoading] = useState(true);
   const [booked, setBooked] = useState(false);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const { id: roomId } = useParams();
 
   useEffect(() => {
-    const roomId = props.match.params.id;
     axios
       .get(`http://localhost:8080/api/room/${roomId}/`)
       .then((response) => {
         setRoom(response.data);
         setLoading(false);
+        return axios.get(`http://localhost:8080/api/hotel/${response.data.id_hotel}/`);
+      })
+      .then((response) => {
+        setHotel(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [props.match.params.id]);
+  }, [roomId]);
 
   const handleBookRoom = () => {
-    setBooked(true);
+    const bookingData = {
+      numero_chambre: room.numeroChambre,
+      start_date: startDate,
+      end_date: endDate,
+    };
+
+    axios
+      .post('http://localhost:8080/api/booking/', bookingData)
+      .then((response) => {
+        setBooked(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -38,7 +58,7 @@ const RoomDetails = (props) => {
           </tr>
           <tr>
             <th>Hotel Chain</th>
-            <td>{room.id_hotel}</td>
+            <td>{hotel.chaineHoteliere ? hotel.chaineHoteliere.nomChaine : ''}</td>
           </tr>
           <tr>
             <th>Price</th>
@@ -58,19 +78,36 @@ const RoomDetails = (props) => {
           </tr>
         </tbody>
       </table>
-      {booked ? (
-        <p className="text-success">Room booked successfully!</p>
-      ) : (
-        <button className="btn btn-primary" onClick={handleBookRoom}>
+      <div className="form-group">
+          <label htmlFor="startDate">Start Date</label>
+          <input
+            type="date"
+            className="form-control"
+            id="startDate"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="endDate">End Date</label>
+          <input
+            type="date"
+            className="form-control"
+            id="endDate"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div>
+        {booked ? (
+          <p className="text-success">Room booked successfully!</p>
+          ) : (
+          <button className="btn btn-primary" onClick={handleBookRoom}>
           Book Room
-        </button>
-      )}
-      <Link className="btn btn-secondary ml-3" to="/booking" key="booking-link">
-        Make a Reservation
-      </Link>
-    </div>
-    </>
-  );
-};
-
-export default RoomDetails;
+          </button>
+          )}
+          </div>
+          </>
+          );
+          };
+          
+          export default RoomDetails;

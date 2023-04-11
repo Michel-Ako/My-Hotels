@@ -8,21 +8,20 @@ const SignUpForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     const clientData = {
       nomComplet,
       adresse,
       nas,
-      etatPaiement: 'Good',
+      etatPaiement: 'Paid',
       dateEnregistrement: new Date().toISOString(),
     };
 
     try {
-      await axios.post('http://localhost:8080/api/clients/save', clientData);
+      console.log(clientData);
+      const response = await axios.post('http://localhost:8080/api/client/add/', clientData);
+      console.log(response);
       alert('Client successfully created!');
-      setNomComplet('');
-      setAdresse('');
-      setNas('');
     } catch (error) {
       console.error(error);
       alert('Error: Failed to create the client');
@@ -31,10 +30,9 @@ const SignUpForm = () => {
 
   return (
     <div className="container">
-      <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="nomComplet">Nom Complet</label>
+          <label htmlFor="nomComplet">Full Name</label>
           <input
             type="text"
             className="form-control"
@@ -58,13 +56,13 @@ const SignUpForm = () => {
         <div className="form-group">
           <label htmlFor="nas">NAS</label>
           <input
-            type="number"
+            type="text"
             className="form-control"
             id="nas"
             value={nas}
             onChange={(e) => setNas(e.target.value)}
-            required
-            maxLength="9"
+            maxLength={9}
+            pattern="\d*"
           />
         </div>
         <button type="submit" className="btn btn-primary">

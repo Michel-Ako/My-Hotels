@@ -32,6 +32,7 @@ const RoomFilter = ({ onChange }) => {
         setHotels(response.data);
       })
       .catch(error => console.log(error));
+
     const fetchHotels = async () => {
       const response = await axios.get('http://localhost:8080/api/hotel/');
       setHotels(response.data);
@@ -151,6 +152,7 @@ const RoomFilter = ({ onChange }) => {
         </select>
       </div>
     </form>
-    );
-  };
+  );
+};
+
 export default RoomFilter;
