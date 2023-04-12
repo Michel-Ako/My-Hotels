@@ -106,7 +106,7 @@ const RoomFilter = ({ onChange }) => {
       <div className="form-group">
         <label htmlFor="capacity">Minimum Room Capacity</label>
         <select
-          className="form-select"
+          className="form-control"
           name="capacity"
           value={filters.capacity}
           onChange={handleInputChange}
@@ -122,7 +122,7 @@ const RoomFilter = ({ onChange }) => {
       <div className="form-group">
         <label htmlFor="totalRooms">Total number of rooms in the hotel</label>
         <select
-          className="form-select"
+          className="form-control"
           name="totalRooms"
           value={filters.totalRooms}
           onChange={handleInputChange}
@@ -138,7 +138,7 @@ const RoomFilter = ({ onChange }) => {
       <div className="form-group">
         <label htmlFor="price">Max Price</label>
         <select
-          className="form-select"
+          className="form-control"
           name="price"
           value={filters.price}
           onChange={handleInputChange}

@@ -104,3 +104,10 @@ body {
 .Title{
   text-align: center;
 }
+.hotel-select {
+  width: 100%;
+  max-width: 300px;
+  display: block;
+  margin-bottom: 20px;
+  padding: 5px 10px;
+}
