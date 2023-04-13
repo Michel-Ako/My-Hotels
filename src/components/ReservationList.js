@@ -5,7 +5,7 @@ const ReservationList = ({ clientID }) => {
   const [reservations, setReservations] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/client/${clientID}/reservations`)
+    axios.get(`http://localhost:8080/api/client/${clientID}/reservations/`)
       .then(response => setReservations(response.data))
       .catch(error => console.log(error));
   }, [clientID]);

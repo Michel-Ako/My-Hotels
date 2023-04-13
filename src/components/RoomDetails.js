@@ -16,7 +16,11 @@ const RoomDetails = () => {
 
   useEffect(() => {
     const fetchRoomDetails = async () => {
-      const response = await axios.get(`http://localhost:8080/api/room/${roomId}/`);
+      const response = await axios.post("http://localhost:8080/api/room", JSON.stringify(this.room), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       setRoom(response.data);
     };
     fetchRoomDetails();

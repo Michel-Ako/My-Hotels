@@ -36,16 +36,18 @@ const EmployeeDashboard = () => {
 
   const handleReservationSubmit = async (event) => {
     event.preventDefault();
-
-    const currentDate = new Date().toISOString();
-
+    
+    const currentDate = new Date().toISOString().split('T')[0];
+    
     try {
-      const response = await axios.post('http://localhost:8080/api/reservation/', {
+      const payload = {
         dateReservation: currentDate,
-        roomNumber: roomNumber,
-        checkInDate: checkInDate,
-        checkOutDate: checkOutDate
-      });
+        numeroChambre: parseInt(roomNumber),
+        dateDebut: checkInDate,
+        dateFin: checkOutDate
+      };
+      const response = await axios.post('http://localhost:8080/api/reservation/', payload);
+      console.log(response.data);
       setRoomNumber('');
       setCheckInDate('');
       setCheckOutDate('');
@@ -56,72 +58,73 @@ const EmployeeDashboard = () => {
       setReservationError('There was an error creating the reservation');
     }
   };
+  
 
   const handleReservationCancel = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/reservation/${id}`);
-      setReservations(reservations.filter(reservation => reservation.id !== id));
+      await axios.delete(`http://localhost:8080/api/reservation/${id}/`);
+      setReservations(reservations.filter((reservation) => reservation.id !== id));
     } catch (error) {
       console.error(error);
       setReservationError('There was an error canceling the reservation');
     }
   };
 
-  return (
-    <>
-      <Navbar />
-      <div className="container">
-        <h1>Employee Dashboard</h1>
+return (
+  <>
+    <Navbar />
+    <div className="container">
+      <h1>Employee Dashboard</h1>
 
-        <h2>All Reservations</h2>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Room Number</th>
-              <th>Check In Date</th>
-              <th>Check Out Date</th>
-              <th>Reservation Date</th>
-              <th>Actions</th>
+      <h2>All Reservations</h2>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Room Number</th>
+            <th>Check In Date</th>
+            <th>Check Out Date</th>
+            <th>Reservation Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {reservations.map((reservation) => (
+            <tr key={reservation.reservationId}>
+              <td>{reservation.numeroChambre}</td>
+              <td>{reservation.dateDebut}</td>
+              <td>{reservation.dateFin}</td>
+              <td>{reservation.dateReservation}</td>
+              <td>
+                <button className="btn btn-danger" onClick={() => handleReservationCancel(reservation.reservationId)}>Cancel</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {reservations.map((reservation) => (
-              <tr key={reservation.id}>
-                <td>{reservation.numero_chambre}</td>
-                <td>{reservation.date_debut}</td>
-                <td>{reservation.date_fin}</td>
-                <td>{reservation.date_reservation}</td>
-                <td>
-                  <button className="btn btn-danger" onClick={() => handleReservationCancel(reservation.id)}>Cancel</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </tbody>
+      </table>
 
-        <hr />
+      <hr />
 
-        <h2>Make a Reservation</h2>
-        {reservationError && <div className="alert alert-danger">{reservationError}</div>}
-        <form onSubmit={handleReservationSubmit}>
-          <div className="form-group">
-            <label htmlFor="roomNumber">Room Number:</label>
-            <input type="text" className="form-control" id="roomNumber" value={roomNumber} onChange={
-              handleRoomNumberChange} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="checkInDate">Check In Date:</label>
-            <input type="date" className="form-control" id="checkInDate" value={checkInDate} onChange={handleCheckInDateChange} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="checkOutDate">Check Out Date:</label>
-            <input type="date" className="form-control" id="checkOutDate" value={checkOutDate} onChange={handleCheckOutDateChange} required />
-          </div>
-          <button type="submit" className="btn btn-primary">Submit</button>
-        </form>
-      </div>
-    </>
-  );
+      <h2>Make a Reservation</h2>
+      {reservationError && <div className="alert alert-danger">{reservationError}</div>}
+      <form onSubmit={handleReservationSubmit}>
+        <div className="form-group">
+          <label htmlFor="roomNumber">Room Number:</label>
+          <input type="text" className="form-control" id="roomNumber" value={roomNumber} onChange={
+            handleRoomNumberChange} required />
+        </div>
+        <div className="form-group">
+          <label htmlFor="checkInDate">Check In Date:</label>
+          <input type="date" className="form-control" id="checkInDate" value={checkInDate} onChange={handleCheckInDateChange} required />
+        </div>
+        <div className="form-group">
+          <label htmlFor="checkOutDate">Check Out Date:</label>
+          <input type="date" className="form-control" id="checkOutDate" value={checkOutDate} onChange={handleCheckOutDateChange} required />
+        </div>
+        <button type="submit" className="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </>
+);
 };
 
 export default EmployeeDashboard;
