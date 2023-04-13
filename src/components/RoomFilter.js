@@ -120,22 +120,6 @@ const RoomFilter = ({ onChange }) => {
         </select>
       </div>
       <div className="form-group">
-        <label htmlFor="totalRooms">Total number of rooms in the hotel</label>
-        <select
-          className="form-control"
-          name="totalRooms"
-          value={filters.totalRooms}
-          onChange={handleInputChange}
-        >
-          <option value="">Select Total Rooms</option>
-          {uniqueTotalRoomsOptions.map((totalRooms, index) => (
-            <option key={index} value={totalRooms}>
-              {totalRooms}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="form-group">
         <label htmlFor="price">Max Price</label>
         <select
           className="form-control"
